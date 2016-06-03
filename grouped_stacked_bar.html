@@ -17,14 +17,41 @@
           stroke-width: 2
       }
 
+
+      #percentageButton {
+             position: absolute;
+             margin-left: 110px;
+             margin-top:60px
+      }
+
+      #countButton {
+       position: absolute;
+       margin-left: 215px;
+       margin-top: 60px
+      }
+
+
       </style>
     </head>
 
     <body>
+    <div class="option">
+        <input id="percentageButton"
+               type = "button"
+               value="As percentage"
+               onclick="show_asPercentage()" />
+    </div>
+    <div class="option">
+        <input id="countButton"
+               type = "button"
+               value="As count"
+               onclick="show_asCount()" />
+    </div>
+
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script>
 
-    var margin = {top: 20, right: 50, bottom: 30, left: 20},
+    var margin = {top: 50, right: 50, bottom: 50, left: 50},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
@@ -60,14 +87,19 @@
     var h2 = d3.select("svg")
                .append("text")
                .text("Titanic Survival vs Cabin Class/Gender")
-               .attr("transform","translate("+(width/2-margin.left-margin.right*2)+","+margin.top+")")
+               .attr("text-anchor","middle")
+               .attr("transform","translate("+(width/2+margin.left)+","+margin.top/2+")")
                .attr("class","header")
                .attr("font-size",25);
 
 
       // Transpose the data into layers
+     function show_asCount(){
+
+
+     svg.selectAll("*").remove();
+
      d3.csv("gender_class_survival.csv", function(data) {
-                console.log(data);
 
             var male_status = ["Male_Survived", "Male_Dead"];
 
@@ -82,7 +114,6 @@
                 };
               });
             }));
-            console.log(layers);
 
             var layers2 = d3.layout.stack()(male_status.map(function(c) {
               return data.map(function(d) {
@@ -148,25 +179,25 @@
           .on("mouseout", function() { tooltip.style("display", "none");})
 
 
-      // add axis
+        // Add the X Axis and label
       svg.append("g")
           .attr("class", "axis axis--x")
           .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
-
-      svg.append("text")
+          .call(xAxis)
+          .append("text")
           .attr("text-anchor","middle")
-          .attr("transform","translate("+(width-margin.right)+","+(height+margin.bottom-5)+")")
+          .attr("transform","translate("+(width/2)+","+margin.bottom+")")
           .style("font-size",20)
           .text("Cabin Class");
 
+        // Add the Y Axis and label
       svg.append("g")
           .attr("class", "axis axis--y")
-          .attr("transform", "translate("+margin.left+","+0+")")
+          .attr("transform","translate("+margin.left+","+0+")")
           .call(yAxis)
           .append("text")
           .attr("text-anchor","end")
-          .attr("transform","translate("+margin.left+","+margin.top+")rotate(-90)")
+          .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
           .style("font-size",20)
           .text("# of Passengers");
 
@@ -214,6 +245,163 @@
         .attr("font-size", "12px")
         .attr("font-weight", "bold");
       });
+    }
+
+    // Option: show as percentage
+    function show_asPercentage() {
+      svg.selectAll("*").remove();
+     d3.csv("gender_class_survival.csv", function(data) {
+                console.log(data);
+
+            var male_status = ["Male_Survived_Rate", "Male_Dead_Rate"];
+
+            var female_status = ["Female_Survived_Rate", "Female_Dead_Rate"];
+
+            var layers = d3.layout.stack()(female_status.map(function(c) {
+              return data.map(function(d) {
+                return {
+                  x : d.Cabin_class,
+                  y : +d[c],
+                  status : c
+                };
+              });
+            }));
+            console.log(layers);
+
+            var layers2 = d3.layout.stack()(male_status.map(function(c) {
+              return data.map(function(d) {
+                return {
+                  x : d.Cabin_class,
+                  y : +d[c],
+                  status : c
+                };
+              });
+            }));
+            console.log(layers2);
+
+      x.domain(layers[0].map(function(d) { return d.x; }));
+      y.domain([0,1]);
+
+      var layer = svg.selectAll(".layer")
+          .data(layers)
+          .enter()
+          .append("g")
+          .attr("class", "layer")
+          .style("fill", function(d, i) { return ColorRange(i); });
+
+      var layer2 = svg.selectAll(".layer2")
+          .data(layers2)
+          .enter()
+          .append("g")
+          .attr("class", "layer2")
+          .style("fill", function(d, i) { return ColorRange2(i); });
+
+      var rect =  layer.selectAll(".female_rect")
+          .data(function(d) { return d;})
+          .enter()
+          .append("rect")
+          .attr("class","female_rect")
+          .attr("x", function(d) { return (x(d.x)-x.rangeBand()/2);})
+          .attr("y", function(d) { return y(d.y + d.y0);})
+          .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0);})
+          .attr("width", x.rangeBand())
+          .on("mouseover", function() { tooltip.style("display", null);})
+          .on("mousemove", function(d) {
+            var xPosition = d3.mouse(this)[0] - 15;
+            var yPosition = d3.mouse(this)[1] - 25;
+                tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                 tooltip.select("text").text(" % : "+d.y);})
+          .on("mouseout", function() { tooltip.style("display", "none");})
+
+
+        var rect2 =  layer2.selectAll(".male_rect")
+          .data(function(d) { return d;})
+          .enter()
+          .append("rect")
+          .attr("class","male_rect")
+          .attr("x", function(d) { return x(d.x)+x.rangeBand()/2;})
+          .attr("y", function(d) { return y(d.y + d.y0);})
+          .attr("height", function(d) { return y(d.y0) - y(d.y + d.y0);})
+          .attr("width", x.rangeBand())
+          .on("mouseover", function() { tooltip.style("display", null);})
+          .on("mousemove", function(d) {
+            var xPosition = d3.mouse(this)[0] - 15;
+            var yPosition = d3.mouse(this)[1] - 25;
+                tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                 tooltip.select("text").text(" % : "+d.y);})
+          .on("mouseout", function() { tooltip.style("display", "none");})
+
+
+        // Add the X Axis and label
+      svg.append("g")
+          .attr("class", "axis axis--x")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis)
+          .append("text")
+          .attr("text-anchor","middle")
+          .attr("transform","translate("+(width/2)+","+margin.bottom+")")
+          .style("font-size",20)
+          .text("Cabin Class");
+
+        // Add the Y Axis and label
+      svg.append("g")
+          .attr("class", "axis axis--y")
+          .attr("transform","translate("+margin.left+","+0+")")
+          .call(yAxis)
+          .append("text")
+          .attr("text-anchor","end")
+          .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
+          .style("font-size",20)
+          .text("% of Passengers");
+
+      // add a legend
+
+
+      var legend = svg.selectAll(".legend")
+          .data([0,1,2,3])
+          .enter()
+          .append("g")
+          .attr("class", "legend")
+          .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+      legend.append("rect")
+            .attr("x", width)
+            .attr("width", 25)
+            .attr("height", 18)
+            .style("fill", function(d, i) { return legend_color(i);})
+
+      legend.append("text")
+            .attr("x", width - 5)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(function(d, i) { switch (i) {
+              case 0: return "Female: Survived";
+              case 1: return "Female: Dead";
+              case 2: return "Male: Survived";
+              case 3: return "Male: Dead";}});
+
+      var tooltip = svg.append("g")
+        .attr("class", "tooltip")
+        .style("display", "none");
+
+      tooltip.append("rect")
+        .attr("width", 65)
+        .attr("height", 20)
+        .attr("fill", "white")
+        .style("opacity", 0.5);
+
+      tooltip.append("text")
+        .attr("x", 30)
+        .attr("dy", "1.2em")
+        .style("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .attr("font-weight", "bold");
+      });
+    }
+
+    show_asPercentage();
+
 
       // Prep the tooltip bits, initial display is hidden
 
