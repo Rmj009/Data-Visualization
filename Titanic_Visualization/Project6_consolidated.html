@@ -3,10 +3,6 @@
 <head>
     <title>Titanic Visualization</title>
     <style>
-        .axis--x text {
-            font:20px ;
-        }
-
         .axis line,
         .axis path {
             fill: none;
@@ -24,13 +20,29 @@
         .countButton {
             position: absolute;
             margin-left: 215px;
-            margin-top: 10px
+            margin-top: 10px;
         }
 
+        header {
+            margin-left: 235px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .readme {
+            width:900px;
+            margin-top: 10px;
+            margin-left: 70px;
+            margin-bottom: 60px;
+        }
     </style>
+
 </head>
 <body>
 <script src="//d3js.org/d3.v3.min.js"></script>
+<header>
+    <h1>Passengers of Titanic: Survived or Not?</h1>
+</header>
 <div class="option">
     <input class="percentageButton"
            type = "button"
@@ -44,6 +56,11 @@
            onclick="show_asCount()" />
 </div>
 <div id="chart1"></div>
+    <div class="readme">
+        <strong>This stacked bar chart shows the survival chance of passengers in different cabin class during the Titanic tragedy.</strong>
+        <p>It demonstrates that the first class passengers have a much higher possibility to be alive than the second class,
+            also the second class has a higher rate of survival than the third class.</p>
+    </div>
 <div class="option">
     <input class="percentageButton"
            type = "button"
@@ -57,6 +74,13 @@
            onclick="show_asCount2()" />
 </div>
 <div id="chart2"></div>
+    <div class="readme">
+        <strong>This bar chart shows the percentage or number of women vs men survived during the Titanic tragedy.</strong>
+        <p>The number of male passengers on board almost doubled the size of female ones, however we could see obvious,
+            females have a much higher chance of survival as the bar shows.</p>
+        <p>By comparing the absolute value, you can find the count of survived female passengers is 233,
+            much larger than the count of survived male ones, which is only 109.</p>
+     </div>
 <div class="option">
     <input class="percentageButton"
            type = "button"
@@ -70,7 +94,22 @@
            onclick="show_asCount3()" />
 </div>
 <div id="chart3"></div>
-
+        <div class="readme">
+            <strong>This bar chart stacks the percentage or absolute number of passengers survived or dead during the tragic sink, <br>
+                and also groups the count by passengers' gender. Two color tones (orange and green) are used to denote the gender, <br>
+                and different shades to differentiate the survived/dead.</strong>
+            <h5>Women have much higher chance than men to survive in every cabin class.</h5>
+            <ul>
+                <li>Especially in first & second cabin class, +90% of the women have survived.</li>
+                <li>Regarding the third cabin class, only half of the women have survived, but the chance for women is still more than 3 times higher than men.</li>
+            </ul>
+            <h5>Men in first class have much higher chance to survive than those in second & third class.</h5>
+            <ul>
+                <li>Above 30% of men survived in first class ( 45 out of 132).</li>
+                <li>The percentage dropped significantly in second & third class to only about 15%.</li>
+            </ul>
+        </div>
+    </div>
 <script>
     // Set the dimensions of the canvas / graph
     var margin = {top: 20, right: 50, bottom: 50, left: 50},
@@ -168,8 +207,8 @@
                     .attr("transform","translate("+margin.left+","+0+")")
                     .call(yAxis)
                     .append("text")
-                    .attr("text-anchor","end")
-                    .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom-margin.top)+")rotate(-90)")
+                    .attr("text-anchor","middle")
+                    .attr("transform","translate("+(-margin.left)+","+height/2+")rotate(-90)")
                     .style("font-size",20)
                     .text("% of Passengers");
 
@@ -361,12 +400,6 @@
             .append("g")
             .attr("transform", "translate("+margin.left+","+margin.top+")");
 
-    // Adds the plot title
-    var h2 = svg2.append("text")
-            .text("Titanic Survival by Gender")
-            .attr("transform","translate("+(width/2-margin.left-margin.right)+","+margin.top+")")
-            .attr("class","header")
-            .attr("font-size",25);
 
     // Define a function to plot the numbers as percentage
     function show_asPercentage2(){
@@ -428,9 +461,16 @@
                     .call(yAxis)
                     .append("text")
                     .attr("text-anchor","end")
-                    .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom-margin.top)+")rotate(-90)")
+                    .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
                     .style("font-size",20)
                     .text("% of Passengers");
+
+            // Adds the plot title
+             var h2 = svg2.append("text")
+                    .text("Titanic Survival by Gender")
+                    .attr("transform","translate("+(width/2-margin.left-margin.right)+","+0+")")
+                    .attr("class","header")
+                    .attr("font-size",25);
 
             var tooltip = svg2.append("g")
                     .attr("class", "tooltip")
@@ -475,7 +515,7 @@
                         case 0: return "Dead";
                         case 1: return "Survived"; }});
         });
-    };
+    }
 
     // Define a function to plot the numbers as absolute value
 
@@ -540,6 +580,12 @@
                     .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
                     .style("font-size",20)
                     .text("# of Passengers");
+
+            svg2.append("text")
+                    .text("Titanic Survival by Gender")
+                    .attr("transform","translate("+(width/2-margin.left-margin.right)+","+0+")")
+                    .attr("class","header")
+                    .attr("font-size",25);
 
             var tooltip = svg2.append("g")
                     .attr("class", "tooltip")
@@ -624,15 +670,7 @@
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
-            .attr("transform", "translate("+margin.left+","+margin.top+")");
-
-     var h2 = svg3.append("text")
-            .text("Titanic Survival vs Cabin Class/Gender")
-            .attr("text-anchor","middle")
-            .attr("transform","translate("+(width/2+margin.left)+","+margin.top/2+")")
-            .attr("class","header")
-            .attr("font-size",25);
-
+            .attr("transform", "translate("+margin.left+","+20+")");
 
     // Define a function to show the absolute values
     function show_asCount3(){
@@ -724,7 +762,7 @@
                     .call(xAxis)
                     .append("text")
                     .attr("text-anchor","middle")
-                    .attr("transform","translate("+(width/2)+","+margin.bottom+")")
+                    .attr("transform","translate("+width/2+","+margin.bottom+")")
                     .style("font-size",20)
                     .text("Cabin Class");
 
@@ -738,6 +776,14 @@
                     .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
                     .style("font-size",20)
                     .text("# of Passengers");
+
+            // Add the title
+            var h2 = svg3.append("text")
+                    .text("Titanic Survival vs Cabin Class/Gender")
+                    .attr("text-anchor","middle")
+                    .attr("transform","translate("+(width+margin.left)/2+","+0+")")
+                    .attr("class","header")
+                    .attr("font-size",25);
 
             // add a legend
             var legend = svg3.selectAll(".legend")
@@ -889,6 +935,13 @@
                     .attr("transform","translate("+(-margin.left)+","+(height/2-margin.bottom)+")rotate(-90)")
                     .style("font-size",20)
                     .text("% of Passengers");
+
+            var h2 = svg3.append("text")
+                    .text("Titanic Survival vs Cabin Class/Gender")
+                    .attr("text-anchor","middle")
+                    .attr("transform","translate("+(width+margin.left)/2+","+0+")")
+                    .attr("class","header")
+                    .attr("font-size",25);
 
             // add a legend
             var legend = svg3.selectAll(".legend")
