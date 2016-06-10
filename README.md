@@ -1,7 +1,7 @@
 #Titanic Visualizaiton
 This project work visualizes Titanic survival based on passenger information such as gender and cabin class.
--Various visual encodings have been utilized such as color, stacked bar, and proportion & absolute numbers for values. 
--Also it incorporates both author-driven narratives and reader-driven exploration through use of button press to make transitions & tooltip to make the plots more interactive.
+- Various visual encodings have been utilized such as color, stacked bar, and proportion & absolute numbers for values. 
+- Also it incorporates both author-driven narratives and reader-driven exploration through use of button press to make transitions & tooltip to make the plots more interactive.
 
 ###Summary:
 This bar chart stacks the percentage and absolute number of passengers survived or dead during the tragic sink.
