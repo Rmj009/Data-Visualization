@@ -5,8 +5,8 @@ This project work visualizes Titanic survival based on passenger information suc
 
 ###Summary:
 This bar chart stacks the percentage and absolute number of passengers survived or dead during the tragic sink.
-It can be seen that gender is the dominant driver for suvival. Women have much higher chance than men to survive in every cabin class. 
-In terms of cabin calss, generally speaking, passengers in first class have much higher chance to survive than those in second & third class.
+- It can be seen that gender is the dominant driver for suvival. Women have much higher chance than men to survive in every cabin class. 
+- In terms of cabin calss, generally speaking, passengers in first class have much higher chance to survive than those in second & third class.
 
 ###Below is the link to take a look at the visualization. 
 
